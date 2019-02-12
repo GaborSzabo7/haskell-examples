@@ -1,0 +1,155 @@
+-- Types and Typelasses
+removeNonUppercase :: [Char] -> [Char]
+removeNonUppercase st = [c | c <- st, elem c ['A'..'Z']]
+
+addThree :: Int -> Int -> Int -> Int
+addThree a b c = a + b + c
+
+-- Integer is not bounded, it can be used to represent really really big numbers
+factorial :: Integer -> Integer
+factorial n = product [1..n]
+
+circumference :: Float -> Float
+circumference r = 2 * r * pi
+
+-- Type variable, pattern matching
+lucky :: (Integral a) => a -> String
+lucky 7 = "Lucky number seven!"
+lucky _ = "Sorry, you are out of luck."
+
+sayMe :: (Integral a) => a -> String
+sayMe 1 = "One"
+sayMe 2 = "Two"
+sayMe _ = "Any number"
+
+factorial2 :: (Integral a) => a -> a
+factorial2 0 = 1
+factorial2 1 = 1
+factorial2 n = n * factorial2 (n-1)
+
+addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
+addVectors a b = (fst a + fst b, snd a + snd b)
+
+addVectors2 :: (Num a) => (a, a) -> (a, a) -> (a, a)
+addVectors2 (a, b) (c, d) = (a + c, b + d)
+
+third :: (a ,b, c) -> c
+third (_, _, x) = x
+
+head2 :: [a] -> a
+head2 [] = error "Can't call head on an empty list."
+head2 (x:_) = x
+
+tell :: (Show a) => [a] -> String
+tell []         = "Empty list."
+tell (x:[])     = "The list has one element: " ++ show x
+tell (x:y:[])   = "The list has two elements: " ++ show x ++ " and " ++ show y
+tell (x:y:_)    = "The list is long."
+
+length2 :: (Num b) => [a] -> b
+length2 []      = 0
+length2 (_:xs)  = 1 + length2 xs
+
+sum2 :: (Num a) => [a] -> a
+sum2 []     = 0
+sum2 (x:xs) = x + sum2 xs
+
+-- as patterns
+capital :: String -> String
+capital []          = "Empty string."
+capital all@(x:xs)  = "The first letter of " ++ all ++ " is " ++ [x]
+
+-- Guards
+bmiTell :: (RealFloat a) => a -> String
+bmiTell bmi
+    | bmi <= 18.5 = "You are underweight."
+    | bmi <= 25.0 = "You are supposedly normal."
+    | bmi <= 30.0 = "You are fat."
+    | otherwise   = "You are a whale."
+
+bmiTell2 :: (RealFloat a) => a -> a -> String
+bmiTell2 weight height
+    | weight / height^2 <= 18.5 = "You are underweight."
+    | weight / height^2 <= 25.0 = "You are supposedly normal."
+    | weight / height^2 <= 30.0 = "You are fat."
+    | otherwise   = "You are a whale."
+
+-- where bindings aren't shared across function bodies of different patterns
+bmiTell3 :: (Show a, RealFloat a) => a -> a -> String
+bmiTell3 weight height
+        | value <= 18.5 = "You are underweight. The value is " ++ show value
+        | value <= 25.0 = "You are supposedly normal. The value is " ++ show value
+        | value <= 30.0 = "You are fat. The value is " ++ show value
+        | otherwise     = "You are a whale."
+    where value = weight / height^2
+
+max2 :: (Ord a) => a -> a -> a
+max2 a b | a > b = a | otherwise = b
+
+compare2 :: (Ord a) => a -> a -> Ordering
+compare2 a b
+    | a > b     = GT
+    | a == b    = EQ
+    | otherwise = LT 
+
+bmiTell4 :: (Show a, RealFloat a) => a -> a -> String
+bmiTell4 weight height
+        | value <= skinny = "You are underweight. The value is " ++ show value
+        | value <= normal = "You are supposedly normal. The value is " ++ show value
+        | value <= fat    = "You are fat. The value is " ++ show value
+        | otherwise       = "You are a whale."
+    where value     = weight / height^2
+          skinny    = 18.5
+          normal    = 25.0
+          fat       = 30.0
+
+initials :: String -> String -> String
+initials firstname lastname = [f] ++ " " ++ [l]
+    where (f:_) = firstname
+          (l:_) = lastname
+
+cylinder :: (RealFloat a) => a -> a -> a
+cylinder r h = 
+    let sideArea = 2 * r * pi * h
+        topArea  = r^2 * pi
+    in sideArea + 2 * topArea
+
+head3 :: [a] -> a
+head3 xs = case xs of []    -> error "No head for empty list."
+                      (x:_) -> x
+
+describeList :: [a] -> String
+describeList xs = "The list is " ++ case xs of []   -> "an empty list."
+                                               [x]  -> "a singleton list."
+                                               xs   -> "a long list."
+
+describeList2 :: [a] -> String
+describeList2 xs = "The list is " ++ what xs
+    where what []   = "an empty list."
+          what [x]  = "a singleton list."
+          what xs   = "a long list."
+
+-- Recursion
+maximum2 :: (Ord a) => [a] -> a
+maximum2 []     = error "There is no maximum of an empty list."
+maximum2 [x]    = x
+maximum2 (x:xs)
+    | x > maxTail = x
+    | otherwise   = maxTail
+    where maxTail = maximum2 xs
+
+maximum3 :: (Ord a) => [a] -> a
+maximum3 []     = error "There is no maximum of an empty list."
+maximum3 [x]    = x
+maximum3 (x:xs) = max x (maximum3 xs)
+
+replicate2 :: (Num i, Ord i) => i -> a -> [a]
+replicate2 n x
+    | n <= 0    = []
+    | otherwise = x : replicate2 (n-1) x
+
+take2 :: (Num i, Ord i) => i -> [a] -> [a]
+take2 n _
+    | n <= 0    = []
+take2 _ []      = []
+take2 n (x:xs)  = x : take2 (n-1) xs
