@@ -153,3 +153,48 @@ take2 n _
     | n <= 0    = []
 take2 _ []      = []
 take2 n (x:xs)  = x : take2 (n-1) xs
+
+reverse2 :: [a] -> [a]
+reverse2 []     = []
+reverse2 (x:xs) = reverse2 xs ++ [x]
+
+repeat2 :: a -> [a]
+repeat2 x = x : repeat2 x
+
+zip2 :: [a] -> [b] -> [(a,b)]
+zip2 _ []           = []
+zip2 [] _           = []
+zip2 (x:xs) (y:ys)  = (x,y) : zip2 xs ys
+
+elem2 :: (Eq a) => a -> [a] -> Bool
+elem2 a [] = False
+elem2 a (x:xs)
+    | a == x    = True
+    | otherwise = elem2 a xs
+
+elem3 :: (Eq a) => a -> [a] -> Bool
+elem3 a []      = False
+elem3 a (x:xs)  = if a == x then True else elem3 a xs
+
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) =
+    let smallerSorted = quicksort [a | a <- xs, a <= x]
+        biggerSorted  = quicksort [a | a <- xs, a > x]
+    in smallerSorted ++ [x] ++ biggerSorted
+
+mulThree :: (Num a) => a -> a -> a -> a
+mulThree x y z = x * y * z
+
+compareWithHundred :: (Num a, Ord a) => a -> Ordering
+compareWithHundred x = compare x 100
+
+dividedByTen :: (Floating a) => a -> a
+dividedByTen = (/10)
+
+isUpperAlphanum :: Char -> Bool
+isUpperAlphanum = (`elem` ['A'..'Z'])
+
+applyTwice :: (a -> a) -> a -> a
+applyTwice f x = f (f x)
+
