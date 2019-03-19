@@ -198,3 +198,14 @@ isUpperAlphanum = (`elem` ['A'..'Z'])
 applyTwice :: (a -> a) -> a -> a
 applyTwice f x = f (f x)
 
+zipWith2 :: (a -> b -> c) -> [a] -> [b] -> [c] 
+zipWith2 _ [] _             = []
+zipWith2 _ _ []             = []
+zipWith2 f (x:xs) (y:ys)    = f x y : zipWith2 f xs ys
+
+flip2 :: (a -> b -> c) -> (b -> a -> c)
+flip2 f = g 
+    where g x y = f y x
+
+flip3 :: (a -> b -> c) -> b -> a -> c
+flip3 f y x = f x y
